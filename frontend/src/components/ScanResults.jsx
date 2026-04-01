@@ -43,6 +43,17 @@ function ResultCard({ result, animDelay }) {
         </div>
       </div>
 
+      {result.protocols && (
+        <div className="protocol-tags">
+          {Object.entries(result.protocols).map(([p, info]) => (
+            <div key={p} className={`protocol-tag ${info.ok ? 'success' : 'failed'}`} title={info.msg}>
+              <span className="protocol-status-icon">{info.ok ? '✔' : '✘'}</span>
+              {p.toUpperCase()}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="result-card-bottom">
         <div className="result-field result-card-full">
           <span className="result-field-label">Server Header</span>

@@ -27,23 +27,29 @@ def scan_targets():
             yield f"data: {json.dumps({'status': 'scanning', 'target': target, 'index': i})}\n\n"
             
             try:
+                # --- Scanning with detailed status ---
                 https_banner = grab_https_banner(target)
+                https_ok = https_banner and not https_banner.startswith("HTTPS Error")
+                
                 http_banner = grab_http_banner(target)
+                http_ok = http_banner and not http_banner.startswith("HTTP Error")
+                
                 ftp_banner = grab_ftp_banner(target)
+                ftp_ok = ftp_banner and (ftp_banner.startswith("220") or "Connection established" in ftp_banner)
 
-                # --- Selection Logic (from main.py) ---
-                if https_banner and not https_banner.startswith("HTTPS Error"):
+                # --- Selection Logic (Sync with main.py) ---
+                if https_ok:
                     selected_banner = https_banner
                     source = "HTTPS"
-                elif http_banner and not http_banner.startswith("HTTP Error"):
+                elif http_ok:
                     selected_banner = http_banner
                     source = "HTTP"
-                elif ftp_banner and ftp_banner.startswith("220"):
+                elif ftp_ok:
                     selected_banner = ftp_banner
                     source = "FTP"
                 else:
-                    selected_banner = (https_banner or "") + (http_banner or "") + (ftp_banner or "")
-                    source = "Combined (fallback)"
+                    selected_banner = f"{https_banner}\n{http_banner}\n{ftp_banner}"
+                    source = "None (Unified Error)"
 
                 server = identify_server(selected_banner, target)
                 server_header = extract_server_header(selected_banner)
@@ -54,7 +60,12 @@ def scan_targets():
                     "server_type": server,
                     "server_header": server_header,
                     "source": source,
-                    "index": i
+                    "index": i,
+                    "protocols": {
+                        "https": {"ok": bool(https_ok), "msg": "SUCCESS" if https_ok else https_banner},
+                        "http": {"ok": bool(http_ok), "msg": "SUCCESS" if http_ok else http_banner},
+                        "ftp": {"ok": bool(ftp_ok), "msg": "SUCCESS" if ftp_ok else ftp_banner}
+                    }
                 }
                 yield f"data: {json.dumps(result)}\n\n"
             except Exception as e:
