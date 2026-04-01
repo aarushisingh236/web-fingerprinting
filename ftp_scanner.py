@@ -8,14 +8,15 @@ import socket
 def grab_ftp_banner(host):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(3)
+        s.settimeout(7)  # Increased timeout for robustness
 
         s.connect((host, 21))
 
-        banner = s.recv(1024).decode(errors='ignore')
+        # Some FTP servers have a slight delay before sending the banner
+        banner = s.recv(1024).decode(errors='ignore').strip()
         s.close()
 
-        return banner
+        return banner if banner else "FTP Connection established (No Banner)"
 
     except Exception as e:
         return f"FTP Error: {e}"

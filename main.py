@@ -36,28 +36,36 @@ print("\n🚀 Web Server Fingerprinting Tool\n")
 for target in targets:
     print(f"\n🔍 Scanning {target}")
 
+    # ---------------------------
+    # SCANNING & STATUS DISPLAY
+    # ---------------------------
     https_banner = grab_https_banner(target)
+    https_ok = https_banner and not https_banner.startswith("HTTPS Error")
+    print(f"   [HTTPS] {'✔ SUCCESS' if https_ok else f'✘ FAILED ({https_banner})'}")
+
     http_banner = grab_http_banner(target)
+    http_ok = http_banner and not http_banner.startswith("HTTP Error")
+    print(f"   [HTTP ] {'✔ SUCCESS' if http_ok else f'✘ FAILED ({http_banner})'}")
+
     ftp_banner = grab_ftp_banner(target)
+    ftp_ok = ftp_banner and (ftp_banner.startswith("220") or "Connection established" in ftp_banner)
+    print(f"   [FTP  ] {'✔ SUCCESS' if ftp_ok else f'✘ FAILED ({ftp_banner})'}")
 
     # ---------------------------
     # SMART SELECTION LOGIC
     # ---------------------------
-    if https_banner and not https_banner.startswith("HTTPS Error"):
+    if https_ok:
         selected_banner = https_banner
         source = "HTTPS"
-
-    elif http_banner and not http_banner.startswith("HTTP Error"):
+    elif http_ok:
         selected_banner = http_banner
         source = "HTTP"
-
-    elif ftp_banner and ftp_banner.startswith("220"):
+    elif ftp_ok:
         selected_banner = ftp_banner
         source = "FTP"
-
     else:
-        selected_banner = https_banner + http_banner + ftp_banner
-        source = "Combined (fallback)"
+        selected_banner = f"{https_banner}\n{http_banner}\n{ftp_banner}"
+        source = "None (Unified Error)"
 
     # ---------------------------
     # IDENTIFICATION
