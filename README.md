@@ -135,5 +135,5 @@ Results are printed to the terminal and also saved to `results.txt`:
 | Member | Module(s) | Responsibility |
 |---|---|---|
 | Member 1 | `http_scanner.py`, `ftp_scanner.py` | TCP socket communication, HTTP HEAD requests, FTP banner grabbing |
-| Member 2 | `ssl_scanner.py` | TLS/SSL wrapping, HTTPS scanning, HEAD→GET fallback logic |
+| Member 2 | `ssl_scanner.py`, UI | HTTPS scanning, SSL handling, frontend UI development |
 | Member 3 | `fingerprint_logic.py`, `main.py` | Server identification, orchestration, results output, accuracy evaluation |
