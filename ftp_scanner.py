@@ -5,7 +5,7 @@
 
 import socket
 
-def grab_ftp_banner(host):
+def scan_ftp(host):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(7)  # Increased timeout for robustness
