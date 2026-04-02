@@ -2,6 +2,7 @@
 # ----------------------------------------
 # HTTPS Banner Grabbing using TLS (explicit)
 # Enforces TLS 1.2+ (modern secure setup)
+# HTTPS Banner Grabbing (Port 443)
 # ----------------------------------------
 
 import socket
