@@ -1,7 +1,7 @@
-# ssl_scanner.py
+# tls_scanner.py
 # ----------------------------------------
-# HTTPS Banner Grabbing (Port 443)
-# Uses HEAD + GET fallback (IMPORTANT)
+# HTTPS Banner Grabbing using TLS (explicit)
+# Enforces TLS 1.2+ (modern secure setup)
 # ----------------------------------------
 
 import socket
@@ -9,9 +9,17 @@ import ssl
 
 def scan_https(host):
     try:
-        context = ssl.create_default_context()
+        # ---- Create TLS context explicitly ----
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
+        context.check_hostname = True
+        context.verify_mode = ssl.CERT_REQUIRED
+        context.load_default_certs()
 
+        # ---- TCP connection ----
         sock = socket.create_connection((host, 443), timeout=3)
+
+        # ---- TLS handshake ----
         ssock = context.wrap_socket(sock, server_hostname=host)
 
         # ---- HEAD request ----
@@ -27,8 +35,10 @@ def scan_https(host):
 
         response = response.decode(errors='ignore')
 
-        # ---- If weak response → try GET ----
+        # ---- Fallback to GET ----
         if len(response) < 300:
+            ssock.close()
+
             sock = socket.create_connection((host, 443), timeout=3)
             ssock = context.wrap_socket(sock, server_hostname=host)
 
@@ -43,8 +53,8 @@ def scan_https(host):
                 response += chunk
 
             response = response.decode(errors='ignore')
-            ssock.close()
 
+        ssock.close()
         return response
 
     except Exception as e:
