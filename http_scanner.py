@@ -6,7 +6,7 @@
 
 import socket
 
-def grab_http_banner(host):
+def scan_http(host):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(7)  # Increased timeout for robustness
