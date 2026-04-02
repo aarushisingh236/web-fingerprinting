@@ -1,0 +1,5 @@
+Web Server Fingerprinting Tool
+
+Develop a tool to identify web server type and version by analyzing service banners using socket communication.
+
+FTP/HTTP banner grabbing; Service identification logic; Multi-server testing; SSL implementation; Accuracy evaluation
