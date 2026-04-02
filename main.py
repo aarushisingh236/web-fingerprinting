@@ -4,8 +4,8 @@
 # ----------------------------------------
 
 import sys
-from http_scanner import grab_http_banner
-from ftp_scanner import grab_ftp_banner
+from http_scanner import scan_http
+from ftp_scanner import scan_ftp
 from ssl_scanner import grab_https_banner
 from fingerprint_logic import identify_server, extract_server_header
 
@@ -43,11 +43,11 @@ for target in targets:
     https_ok = https_banner and not https_banner.startswith("HTTPS Error")
     print(f"   [HTTPS] {'✔ SUCCESS' if https_ok else f'✘ FAILED ({https_banner})'}")
 
-    http_banner = grab_http_banner(target)
+    http_banner = scan_http(target)
     http_ok = http_banner and not http_banner.startswith("HTTP Error")
     print(f"   [HTTP ] {'✔ SUCCESS' if http_ok else f'✘ FAILED ({http_banner})'}")
 
-    ftp_banner = grab_ftp_banner(target)
+    ftp_banner = scan_ftp(target)
     ftp_ok = ftp_banner and (ftp_banner.startswith("220") or "Connection established" in ftp_banner)
     print(f"   [FTP  ] {'✔ SUCCESS' if ftp_ok else f'✘ FAILED ({ftp_banner})'}")
 
