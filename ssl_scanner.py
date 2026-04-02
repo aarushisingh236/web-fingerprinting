@@ -7,7 +7,7 @@
 import socket
 import ssl
 
-def grab_https_banner(host):
+def scan_https(host):
     try:
         context = ssl.create_default_context()
 

@@ -8,9 +8,9 @@ import time
 # Add the parent directory to sys.path to import scanners
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from http_scanner import grab_http_banner
-from ftp_scanner import grab_ftp_banner
-from ssl_scanner import grab_https_banner
+from http_scanner import scan_http
+from ftp_scanner import scan_ftp
+from ssl_scanner import scan_https
 from fingerprint_logic import identify_server, extract_server_header
 
 app = Flask(__name__)
@@ -28,13 +28,13 @@ def scan_targets():
             
             try:
                 # --- Scanning with detailed status ---
-                https_banner = grab_https_banner(target)
+                https_banner = scan_https(target)
                 https_ok = https_banner and not https_banner.startswith("HTTPS Error")
                 
-                http_banner = grab_http_banner(target)
+                http_banner = scan_http(target)
                 http_ok = http_banner and not http_banner.startswith("HTTP Error")
                 
-                ftp_banner = grab_ftp_banner(target)
+                ftp_banner = scan_ftp(target)
                 ftp_ok = ftp_banner and (ftp_banner.startswith("220") or "Connection established" in ftp_banner)
 
                 # --- Selection Logic (Sync with main.py) ---

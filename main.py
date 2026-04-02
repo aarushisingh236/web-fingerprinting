@@ -6,7 +6,7 @@
 import sys
 from http_scanner import scan_http
 from ftp_scanner import scan_ftp
-from ssl_scanner import grab_https_banner
+from ssl_scanner import scan_https
 from fingerprint_logic import identify_server, extract_server_header
 
 
@@ -39,7 +39,7 @@ for target in targets:
     # ---------------------------
     # SCANNING & STATUS DISPLAY
     # ---------------------------
-    https_banner = grab_https_banner(target)
+    https_banner = scan_https(target)
     https_ok = https_banner and not https_banner.startswith("HTTPS Error")
     print(f"   [HTTPS] {'✔ SUCCESS' if https_ok else f'✘ FAILED ({https_banner})'}")
 
